@@ -3,6 +3,8 @@ var yeoman    = require('yeoman-generator')
   , chalk     = require('chalk')
   , yosay     = require('yosay')
   , GitHubApi = require('github')
+  , fs        = require('fs')
+  , path      = require('path')
   , github;
 
 var githubOptions = {
@@ -17,7 +19,8 @@ module.exports = yeoman.generators.Base.extend({
   },
 
   prompting: function () {
-    var done = this.async();
+    var done = this.async()
+      , self = this;
 
     // Have Yeoman greet the user.
     this.log(yosay(
@@ -31,7 +34,7 @@ module.exports = yeoman.generators.Base.extend({
     },{
       name: 'appName',
       message: 'What would you like to call your app?',
-      default: this._.dasherize(this.appname)
+      default: function(answers) { return self._.slugify(self.appname) }
     },{
       name: 'appDescription',
       message: 'How would you describe your project?'
@@ -43,14 +46,51 @@ module.exports = yeoman.generators.Base.extend({
       name: 'version',
       message: 'What is the starting version number you\'d like to use?',
       default: '1.0.0'
+    },{
+      name: 'nodeVersion',
+      message: 'What version of node do you want running on your app Container?',
+      default: '0.10.36'
+    },{
+      name: 'dockerTag',
+      message: 'What name would you like to use for your Docker tag?',
+      default: function(answers) { return answers.githubUser + '/' + self._.slugify(answers.appName) }
+    },{
+      name: 'appPort',
+      message: 'What port would you like to spin the app up on in your Docker host?',
+      default: 8000
+    },{
+      name: 'debugUIPort',
+      message: 'What port would you like to spin the debugger UI up on in your Docker host?',
+      default: 8080
+    },{
+      name: 'debuggerPort',
+      message: 'What port would you like to spin the debug listener up on in your Docker host?',
+      default: 5858
+    },{
+      name: 'useMongo',
+      type: "confirm",
+      message: 'Will this app need a MongoDB instance?'
+    },{
+      name: 'mongoVersion',
+      type: "confirm",
+      message: 'Will this app need a MongoDB instance?',
+      when: function(answers) { return answers.useMongo },
+      default: '2.6.7'
     }];
 
     this.prompt(prompts, function (props) {
-      this.githubUser = props.githubUser;
-      this.appName = props.appName;
-      this.appDescription = props.appDescription;
-      this.author = props.author;
-      this.version = props.version;
+      this.githubUser       = props.githubUser;
+      this.appName          = props.appName;
+      this.appDescription   = props.appDescription;
+      this.author           = props.author;
+      this.version          = props.version;
+      this.nodeVersion      = props.nodeVersion;
+      this.dockerTag        = props.dockerTag;
+      this.appPort          = props.appPort;
+      this.debugUIPort      = props.debugUIPort;
+      this.debuggerPort     = props.debuggerPort;
+      this.useMongo         = props.useMongo;
+      this.mongoVersion     = props.mongoVersion;
 
       done();
     }.bind(this));
@@ -73,25 +113,44 @@ module.exports = yeoman.generators.Base.extend({
   writing: {
     skeleton: function () {
       var done = this.async()
-        , self = this;
-      this.remote('duro', 'hapi-starter', function(err, remote) {
+        , self = this
+        , pkg;
+
+      // var ogSourceRoot = this.sourceRoot();
+      // this.sourceRoot(path.join(process.env.HOME, 'Workspace', 'projects', 'zg-site'));
+      // this.directory('.', '.');
+      // pkg = this.fs.readJSON(this.destinationPath('_package.json'));
+      // this._.each(pkg.templates, function(dest, src) {
+      //   self.template(src, dest);
+      //   self.fs.delete(self.destinationPath(src));
+      // });
+      // done();
+
+      this.remote('duro', 'hapi-starter', 'master', function(err, remote) {
         if (err) throw err;
         remote.directory('.', '.');
+        pkg = self.fs.readJSON(self.destinationPath('_package.json'));
+        self._.each(pkg.templates, function(dest, src) {
+          remote.template(src, dest);
+          self.fs.delete(self.destinationPath(src));
+        });
         done();
-      })
+      }, true);
     },
 
     packageUpdate: function() {
       var appPkg          = this.fs.readJSON(this.destinationPath('package.json'));
-      appPkg.name         = this.appName;
-      appPkg.description  = this.appDescription;
-      appPkg.version      = this.version;
-      appPkg.author       = this.author;
-      this.fs.write(
-        this.destinationPath('package.json'),
-        JSON.stringify(appPkg, null, 2)
-      );
-    }
+      // console.log(this.destinationPath('package.json'));
+      // console.log(appPkg);
+      // appPkg.name         = this.appName;
+      // appPkg.description  = this.appDescription;
+      // appPkg.version      = this.version;
+      // appPkg.author       = this.author;
+      // this.fs.write(
+      //   this.destinationPath('package.json'),
+      //   JSON.stringify(appPkg, null, 2)
+      // );
+    },
   },
 
   install: function () {
