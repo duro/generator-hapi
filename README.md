@@ -1,7 +1,5 @@
-# generator-hapi [![Build Status](https://secure.travis-ci.org/duro/generator-hapi.png?branch=master)](https://travis-ci.org/duro/generator-hapi)
-
+# generator-helpi
 > [Yeoman](http://yeoman.io) generator
-
 
 ## Getting Started
 
@@ -23,16 +21,16 @@ npm install -g yo
 
 Yeoman travels light. He didn't pack any generators when he moved in. You can think of a generator like a plug-in. You get to choose what type of application you wish to create, such as a Backbone application or even a Chrome extension.
 
-To install generator-hapi from npm, run:
+To install generator-hapi-vagrant-docker from npm, run:
 
 ```bash
-npm install -g generator-hapi
+npm install -g generator-helpi
 ```
 
 Finally, initiate the generator:
 
 ```bash
-yo hapi
+yo helpi
 ```
 
 ### Getting To Know Yeoman
