@@ -25,7 +25,8 @@ var manifest = {
           $default: [{ log: '*', response: '*' }]
         }
       }]
-    }
+    },
+    './server/hello': {}
   }
 };
 

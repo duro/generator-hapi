@@ -4,7 +4,8 @@
   "description": "<%= appDescription %>",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "start": "node index.js",
+    "test-server": "lab -v -t 50"
   },
   "templates": {
     "_package.json" : "package.json",
@@ -19,7 +20,9 @@
   "devDependencies": {
     "browserify": "^9.0.3",
     "gulp": "^3.8.11",
-    "watchify": "^2.4.0"
+    "watchify": "^2.4.0",
+    "code": "^1.3.0",
+    "lab": "^5.2.1"
   },
   "dependencies": {
     "confidence": "^1.0.0",
