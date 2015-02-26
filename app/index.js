@@ -118,24 +118,24 @@ module.exports = yeoman.generators.Base.extend({
 
       // var ogSourceRoot = this.sourceRoot();
       // this.sourceRoot(path.join(process.env.HOME, 'Workspace', 'projects', 'hapi-vagrant-docker-starter'));
-      // this.directory('.', '.');
-      // pkg = this.fs.readJSON(this.destinationPath('_package.json'));
-      // this._.each(pkg.templates, function(dest, src) {
-      //   self.template(src, dest);
-      //   self.fs.delete(self.destinationPath(src));
-      // });
-      // done();
+      this.directory('.', '.');
+      pkg = this.fs.readJSON(this.destinationPath('_package.json'));
+      this._.each(pkg.templates, function(dest, src) {
+        self.template(src, dest);
+        self.fs.delete(self.destinationPath(src));
+      });
+      done();
 
-      this.remote('duro', 'hapi-vagrant-docker-starter', 'master', function(err, remote) {
-        if (err) throw err;
-        remote.directory('.', '.');
-        pkg = self.fs.readJSON(self.destinationPath('_package.json'));
-        self._.each(pkg.templates, function(dest, src) {
-          remote.template(src, dest);
-          self.fs.delete(self.destinationPath(src));
-        });
-        done();
-      }, true);
+      // this.remote('duro', 'hapi-vagrant-docker-starter', 'master', function(err, remote) {
+      //   if (err) throw err;
+      //   remote.directory('.', '.');
+      //   pkg = self.fs.readJSON(self.destinationPath('_package.json'));
+      //   self._.each(pkg.templates, function(dest, src) {
+      //     remote.template(src, dest);
+      //     self.fs.delete(self.destinationPath(src));
+      //   });
+      //   done();
+      // }, true);
     }
   },
 

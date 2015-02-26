@@ -1,0 +1,29 @@
+# Vagrantfile for the proxy VM
+
+Vagrant.configure("2") do |config|
+
+  config.vm.define "<%= _.slugify(appName) %>-docker-host", primary: true do |dhost|
+
+    dhost.vm.box = "yungsang/boot2docker"
+    dhost.vm.box_version = "= 1.4.1"
+
+    dhost.vm.network :private_network, ip: "192.168.100.100"
+
+    dhost.vm.provider "virtualbox" do |v|
+      # On VirtualBox, we don't have guest additions or a functional vboxsf
+      # in TinyCore Linux, so tell Vagrant that so it can be smarter.
+      v.name = "<%= _.slugify(appName) %>-docker-host"
+      v.check_guest_additions = false
+      v.functional_vboxsf = false
+      v.memory = 2048
+    end
+
+    # b2d doesn't support NFS
+    dhost.nfs.functional = false
+
+    # Add any ports you want forwarded from your host to the Docker host here
+    # dhost.vm.network "forwarded_port", guest: 8080, host: 8080
+
+  end
+
+end

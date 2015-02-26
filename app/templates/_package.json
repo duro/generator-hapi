@@ -1,0 +1,34 @@
+{
+  "name": "<%= _.slugify(appName) %>",
+  "version": "<%= version %>",
+  "description": "<%= appDescription %>",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "templates": {
+    "_package.json" : "package.json",
+    "_config.js" : "config.js",
+    "_Dockerfile" : "Dockerfile",
+    "_Vagrantfile" : "Vagrantfile",
+    "docker/_Dockerhost" : "docker/Dockerhost",
+    "bin/_dev.sh" : "bin/dev.sh"
+  },
+  "author": "<%= author %>",
+  "license": "ISC",
+  "devDependencies": {
+    "browserify": "^9.0.3",
+    "gulp": "^3.8.11",
+    "watchify": "^2.4.0"
+  },
+  "dependencies": {
+    "confidence": "^1.0.0",
+    "glue": "^2.0.0",
+    "good": "^5.1.2",
+    "good-console": "^4.1.0",
+    "hapi": "^8.2.0",
+    "hoek": "^2.11.0",
+    "joi": "^5.1.0",
+    "nodemon": "^1.3.7"
+  }
+}

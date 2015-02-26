@@ -1,0 +1,51 @@
+ENV['VAGRANT_DEFAULT_PROVIDER'] = 'docker'
+ENV["DOCKER_HOST_VAGRANT_FILE"] ||= "./docker/Dockerhost"
+ENV["DOCKER_HOST_VAGRANT_NAME"] ||= "<%= _.slugify(appName) %>-docker-host"
+
+# BUILD ALL WITH: vagrant up --no-parallel
+
+Vagrant.configure("2") do |config|
+  <% if (useMongo) { %>
+  config.vm.define "mongodb" do |v|
+
+    v.vm.provider "docker" do |d|
+      d.vagrant_machine = ENV["DOCKER_HOST_VAGRANT_NAME"]
+      d.vagrant_vagrantfile = ENV["DOCKER_HOST_VAGRANT_FILE"]
+      d.image = "mongo:<%= mongoVersion %>"
+      d.name = "<%= _.slugify(appName) %>_mongodb"
+      d.remains_running = true
+    end
+  end
+  <% } %>
+  config.vm.define "app" do |v|
+
+    v.vm.synced_folder ".", "/opt/app", type: "rsync",
+      rsync__exclude: get_ignored_files()
+
+    v.vm.provider "docker" do |d|
+      d.vagrant_machine = ENV["DOCKER_HOST_VAGRANT_NAME"]
+      d.vagrant_vagrantfile = ENV["DOCKER_HOST_VAGRANT_FILE"]
+      d.build_dir = "."
+      d.build_args = ['--tag="<%= dockerTag %>"']
+      d.env = { :NODE_ENV => 'dev' }
+      d.remains_running = true
+      d.ports = ["<%= appPort %>:<%= appPort %>", "<%= debugUIPort %>:<%= debugUIPort %>", "<%= debuggerPort %>:<%= debuggerPort %>"]
+      <% if (useMongo) { %>d.link("<%= _.slugify(appName) %>_mongodb:mongodb")<% } %>
+      d.cmd = ["./bin/dev.sh"]
+    end
+  end
+
+end
+
+def get_ignored_files()
+  ignore_file   = ".rsyncignore"
+  ignore_array  = []
+
+  if File.exists? ignore_file and File.readable? ignore_file
+    File.read(ignore_file).each_line do |line|
+      ignore_array << line.chomp
+    end
+  end
+
+  return ignore_array
+end
