@@ -117,7 +117,7 @@ module.exports = yeoman.generators.Base.extend({
         , pkg;
 
       // var ogSourceRoot = this.sourceRoot();
-      // this.sourceRoot(path.join(process.env.HOME, 'Workspace', 'projects', 'zg-site'));
+      // this.sourceRoot(path.join(process.env.HOME, 'Workspace', 'projects', 'hapi-vagrant-docker-starter'));
       // this.directory('.', '.');
       // pkg = this.fs.readJSON(this.destinationPath('_package.json'));
       // this._.each(pkg.templates, function(dest, src) {
@@ -126,7 +126,7 @@ module.exports = yeoman.generators.Base.extend({
       // });
       // done();
 
-      this.remote('duro', 'hapi-starter', 'master', function(err, remote) {
+      this.remote('duro', 'hapi-vagrant-docker-starter', 'master', function(err, remote) {
         if (err) throw err;
         remote.directory('.', '.');
         pkg = self.fs.readJSON(self.destinationPath('_package.json'));
@@ -136,21 +136,7 @@ module.exports = yeoman.generators.Base.extend({
         });
         done();
       }, true);
-    },
-
-    packageUpdate: function() {
-      var appPkg          = this.fs.readJSON(this.destinationPath('package.json'));
-      // console.log(this.destinationPath('package.json'));
-      // console.log(appPkg);
-      // appPkg.name         = this.appName;
-      // appPkg.description  = this.appDescription;
-      // appPkg.version      = this.version;
-      // appPkg.author       = this.author;
-      // this.fs.write(
-      //   this.destinationPath('package.json'),
-      //   JSON.stringify(appPkg, null, 2)
-      // );
-    },
+    }
   },
 
   install: function () {
